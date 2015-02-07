@@ -8,8 +8,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -64,6 +68,9 @@ public class ViewerView
 	
 	/*Bottom Tool Bar identifier.*/
 	private JLabel filePathLabel; 
+	private JLabel navigationLabel;
+	private JButton previousButton;
+	private JButton nextButton;
 	private JLabel zoomLabel;
 	private JLabel zoomMinusLabel;
 	private JSlider zoomSlider;
@@ -152,7 +159,29 @@ public class ViewerView
 		bottomMenuBar.add(Box.createHorizontalStrut(100));
 		bottomMenuBar.add(Box.createHorizontalGlue());
 
-		/* Zoom slider components for bottom tool bar.*/
+		/*Navigation components for bottom tool bar.*/
+		navigationLabel = new JLabel("Navigation: ");
+		
+		previousButton = new JButton();
+		nextButton = new JButton();
+		try {
+			
+			previousButton.setIcon(new ImageIcon(ImageIO.read(new File("src/images/arrow_left.png"))));
+			nextButton.setIcon(new ImageIcon(ImageIO.read(new File("src/images/arrow_right.png"))));
+		} 
+		catch (IOException e) 
+		{
+		
+			e.printStackTrace();
+			previousButton.setText("<");
+			nextButton.setText(">");
+		}
+		
+		bottomMenuBar.add(previousButton);
+		bottomMenuBar.add(nextButton);
+		bottomMenuBar.add(Box.createHorizontalStrut(10));
+		
+		/*Zoom slider components for bottom tool bar.*/
 		zoomLabel = new JLabel("Zoom: ");
 		zoomMinusLabel = new JLabel("-");
 		zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, ZOOM_INIT);

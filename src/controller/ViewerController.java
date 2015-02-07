@@ -114,6 +114,10 @@ public class ViewerController {
 		return fileChooser;
 	}
 	
+	/**
+	 * @param fileName
+	 * @return
+	 */
 	public BufferedImage loadImageFromFile(File fileName)
 	{
 		
@@ -129,16 +133,7 @@ public class ViewerController {
 			return null;
 		}
 	}
-	
-	public int calculateMinimumWidth()
-	{
-		
-		
-		return (applicationView.getFilePathLabel()
-				.getSize().width + applicationView
-				.getZoomSlider().getWidth() + 200); //Invisible 100px horizontal strut * 2 added into new width.
-	}
-	
+
 	/**
 	 * 
 	 */
@@ -178,10 +173,7 @@ public class ViewerController {
 						}));						
 					}
 					else
-					{
-						
 						files.add(file);
-					}
 					
 					currentImageIndex = 0;
 					imageView.setCurrentImage(loadImageFromFile(files.get(currentImageIndex)));
@@ -192,9 +184,9 @@ public class ViewerController {
 					applicationView.getApplicationFrame().revalidate();
 					
 					applicationView.getApplicationFrame().setMinimumSize(
-							new Dimension(calculateMinimumWidth(),
-									applicationView.getApplicationFrame()
-									.getMinimumSize().height)); 					
+							new Dimension(applicationView.getBottomMenuBar()
+							.getPreferredSize().width, applicationView
+							.getApplicationFrame().getMinimumSize().height)); 					
 				}
 			}			
 		});
