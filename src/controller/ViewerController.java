@@ -2,14 +2,19 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
 import views.ImageView;
@@ -106,6 +111,22 @@ public class ViewerController {
 		return fileChooser;
 	}
 	
+	public BufferedImage loadImageFromFile(File fileName)
+	{
+		
+		try
+		{
+			
+			return ImageIO.read(fileName);
+			
+		}
+		catch(IOException e)
+		{
+			
+			return null;
+		}
+	}
+	
 	/**
 	 * 
 	 */
@@ -146,12 +167,12 @@ public class ViewerController {
 					}
 					else
 					{
-		
+						
+						files.add(file);
 					}
+					
+					imageView.setCurrentImage(loadImageFromFile(files.get(0)));
 				}
-				
-				System.out.println(files.toString());
-				System.out.println(returnValue);
 			}			
 		});
 		
