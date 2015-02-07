@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -186,6 +187,33 @@ public class ViewerController {
 				applicationView.getApplicationFrame().dispose();
 				System.exit(0);
 			}
+		});
+		
+		/*Implementing listener for the auto-resize check box view menu item.*/
+		applicationView.getViewMenuAutoResizeCheckBox().addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+			
+				imageView.setAutoResize(applicationView.getViewMenuAutoResizeCheckBox()
+						.isSelected() ? true : false);
+				imageView.paintComponent(imageView.getGraphics());
+			}	
+		});
+		
+		/*Implementing listener for the invert viewer background color view menu item.*/
+		applicationView.getViewMenuInvertBackground().addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+			
+				if (imageView.getBackground() == Color.BLACK)
+					imageView.setBackground(Color.WHITE);
+				else
+					imageView.setBackground(Color.BLACK);
+			}	
 		});
 		
 		applicationView.getApplicationFrame().setVisible(true);

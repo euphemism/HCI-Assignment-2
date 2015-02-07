@@ -1,12 +1,4 @@
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.WindowConstants;
-
 import views.ViewerView;
-
-import com.sun.glass.events.KeyEvent;
 
 import controller.ViewerController;
 
@@ -29,7 +21,7 @@ public class PictureViewer {
 		ViewerView applicationView = new ViewerView();
 		
 		controller.setApplicationView(applicationView);
-		controller.setImageView(applicationView.getApplicationPanel());
+		controller.setImageView(applicationView.getImageView());
 		controller.start();
 	}
 }

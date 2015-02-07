@@ -10,6 +10,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.Box;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,9 +52,17 @@ public class ViewerView
 	private JMenuItem fileMenuOpen;
 	private JMenuItem fileMenuExit;
 	
+	/*View Menu Identifiers*/
+	private JMenu viewMenu;
+	private JCheckBoxMenuItem viewMenuAutoResizeCheckBox;
+	private JMenuItem viewMenuInvertBackground;
+	
 	/*Help Menu identifiers.*/
 	private JMenu helpMenu;
-	private ImageView applicationPanel;
+	private ImageView imageView;
+	
+	/*Bottom Tool Bar identifier.*/
+	private JLabel filePathLabel; 
 	
 	/**
 	 * 
@@ -87,7 +96,7 @@ public class ViewerView
 		/*File menu for menu bar.*/
 		fileMenu = new JMenu("File");
 		fileMenu.getAccessibleContext().setAccessibleDescription("File menu.");
-		fileMenu.setMnemonic(KeyEvent.VK_F);
+		fileMenu.setMnemonic(KeyEvent.VK_F); //Mnemonic 'F'ile
 		
 		fileMenuOpen = new JMenuItem("Open", KeyEvent.VK_O); //Mnemonic: 'O'pen
 		fileMenuExit = new JMenuItem("Exit", KeyEvent.VK_E); //Mnemonic: 'E'xit
@@ -97,6 +106,21 @@ public class ViewerView
 		fileMenu.addSeparator();
 		fileMenu.add(fileMenuExit);
 		menuBar.add(fileMenu);
+		
+		/*View menu for menu bar.*/
+		viewMenu = new JMenu("View");
+		viewMenu.getAccessibleContext().setAccessibleDescription("View menu");
+		viewMenu.setMnemonic(KeyEvent.VK_V); //Mnemonic: 'V'iew
+		
+		viewMenuAutoResizeCheckBox = new JCheckBoxMenuItem("Auto-resize image");
+		viewMenuAutoResizeCheckBox.setMnemonic(KeyEvent.VK_A); //Mnemonic: 'A'uto-resize
+		viewMenuAutoResizeCheckBox.setSelected(true);
+		
+		viewMenuInvertBackground = new JMenuItem("Invert viewer background", KeyEvent.VK_I); //Mnemonic: 'I'nvert
+		
+		viewMenu.add(viewMenuAutoResizeCheckBox);
+		viewMenu.add(viewMenuInvertBackground);
+		menuBar.add(viewMenu);
 		
 		menuBar.add(Box.createHorizontalGlue());
 
@@ -108,10 +132,12 @@ public class ViewerView
 		
 		applicationFrame.setJMenuBar(menuBar);
 		
-		applicationPanel = new ImageView();
+		imageView = new ImageView();
+		imageView.setAutoResize(true);
 		
 		bottomMenuBar = new JMenuBar();
-		bottomMenuBar.add(new JLabel("bottom toolbar."));
+		filePathLabel = new JLabel(" ");
+		bottomMenuBar.add(filePathLabel);
 		bottomMenuBar.add(Box.createHorizontalGlue());
 
 		/*Layout constraints for the main application panel.*/
@@ -123,7 +149,8 @@ public class ViewerView
 		constraints.weighty = 1.0;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.FIRST_LINE_START;
-		applicationFrame.add(applicationPanel, constraints);
+		
+		applicationFrame.add(imageView, constraints);
 		
 		/*Layout constraints for the bottom menu bar.*/
 		constraints = new GridBagConstraints();
@@ -153,7 +180,15 @@ public class ViewerView
 
 	public JMenu getHelpMenu() {return helpMenu;}
 
-	public ImageView getApplicationPanel() {return applicationPanel;}
+	public JMenu getViewMenu() {return viewMenu;}
+
+	public JCheckBoxMenuItem getViewMenuAutoResizeCheckBox() {return viewMenuAutoResizeCheckBox;}
+
+	public JMenuItem getViewMenuInvertBackground() {return viewMenuInvertBackground;}
+
+	public JLabel getFilePathLabel() {return filePathLabel;}
+
+	public ImageView getImageView() {return imageView;}
 	
 	public JFrame getApplicationFrame(){return applicationFrame;}
 }
