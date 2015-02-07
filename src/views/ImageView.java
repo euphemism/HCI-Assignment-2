@@ -13,10 +13,8 @@ public class ImageView extends JPanel
 	private BufferedImage currentImage;
 	private int currentImageWidth;
 	private int currentImageHeight;
-	private int resizedWidth;
-	private int resizedHeight;
-	private int xStart;
-	private int yStart;
+	private double widthRatio;
+	private double heightRatio;
 	private boolean autoResize;
 	
 	public ImageView()
@@ -31,58 +29,58 @@ public class ImageView extends JPanel
     
 		super.paintComponent(g);	
 		
+		int xStart;
+		int yStart;
+		int resizedWidth;
+		int resizedHeight;
+		
 		Dimension size = this.getSize();
 		int width = (int) size.getWidth();
 		int height = (int) size.getHeight();
-				
-		xStart = (int) Math.floor((width / 2) - (currentImageWidth / 2));
-		yStart = (int) Math.floor((height / 2) - (currentImageHeight / 2));
 		
 		if (autoResize)
 		{
 			
-			if ((currentImageWidth < width) && (currentImageHeight < height))
+			if ((currentImageWidth <= width) && (currentImageHeight <= height))
 			{
-						
+
+				xStart = (int) (Math.floor((width / 2) - (currentImageWidth / 2)));
+				yStart = (int) (Math.floor((height / 2) - (currentImageHeight / 2)));
+				
 				g.drawImage(currentImage, xStart, yStart, null);
 			}
 			else
 			{
 				
-				g.drawImage(currentImage, 0, 0, width, height, 0, 0, currentImageWidth, currentImageHeight, null);
-	/*
-			
-				if (currentImageWidth > width)
+				widthRatio = ((double) width / currentImageWidth);
+				heightRatio = ((double) height / currentImageHeight);
+
+				if (widthRatio <= heightRatio)
 				{
 					
-					if (currentImageHeight > height)
-					{
-						
-						g.drawImage(currentImage, 0, 0, width, height, 0, 0, currentImageWidth, currentImageHeight, null);
-					}
-					else
-					{
-						
-						g.drawImage(currentImage, 0, 0, width, height, 0, 0, currentImageWidth, currentImageHeight, null);
-
-					}
+					resizedWidth = (int) (currentImageWidth * widthRatio);
+					resizedHeight = (int) (currentImageHeight * widthRatio);
 				}
 				else
 				{
+
+					resizedWidth = (int) (currentImageWidth * heightRatio);
+					resizedHeight = (int) (currentImageHeight * heightRatio);
+				}
 				
-					if (currentImageHeight > height)
-					{
-					
-					}
-					else
-					{
-						
-					}
-				}	*/
+				xStart = (int) (Math.floor((width / 2) - (resizedWidth / 2)));
+				yStart = (int) (Math.floor((height / 2) - (resizedHeight / 2)));
+				
+				g.drawImage(currentImage, xStart, yStart, xStart + resizedWidth,
+						yStart + resizedHeight, 0, 0, currentImageWidth,
+						currentImageHeight, null);
 			}
 		}
 		else
 		{
+			
+			xStart = (int) (Math.floor((width / 2) - (currentImageWidth / 2)));
+			yStart = (int) (Math.floor((height / 2) - (currentImageHeight / 2)));
 			
 			g.drawImage(currentImage, xStart, yStart, null);
 		}
