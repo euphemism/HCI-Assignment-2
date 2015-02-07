@@ -32,7 +32,8 @@ import com.sun.glass.events.KeyEvent;
  * @author Nicholas
  *
  */
-public class ViewerView implements ActionListener, ItemListener {
+public class ViewerView
+{
 
 	/*Application Frame identifiers.*/
 	private JFrame applicationFrame;
@@ -155,64 +156,4 @@ public class ViewerView implements ActionListener, ItemListener {
 	public ImageView getApplicationPanel() {return applicationPanel;}
 	
 	public JFrame getApplicationFrame(){return applicationFrame;}
-
-	public void spawnFileChooser()
-	{
-	
-		fileChooser = new JFileChooser();
-		
-		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		fileChooser.setFileFilter(new FileFilter(){
-
-			@Override
-			public boolean accept(File f) {
-				
-				if (f.isDirectory())
-					return true;
-					
-				Matcher matcher = Pattern.compile(".*\\.(?<extension>.*)").matcher(f.getName());
-				
-				if (! matcher.matches())
-					return false;
-				
-				switch(matcher.group("extension").toLowerCase())
-				{
-				
-					case "bmp": case "gif": case "jpeg": case "jpg": case "png":
-						return true;
-					
-					default:
-						return false;
-				}
-			}
-			
-			@Override
-			public String getDescription() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-		});
-		int returnValue = fileChooser.showOpenDialog(applicationFrame);
-		System.out.println(returnValue);
-	}
-		
-	/**
-	 * @param arg0
-	 */
-	@Override
-	public void itemStateChanged(ItemEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @param arg0
-	 */
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
