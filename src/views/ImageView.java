@@ -13,9 +13,8 @@ public class ImageView extends JPanel
 	private BufferedImage currentImage;
 	private int currentImageWidth;
 	private int currentImageHeight;
-	private double widthRatio;
-	private double heightRatio;
 	private boolean autoResize;
+	private double zoomRatio;	
 	
 	public ImageView()
 	{
@@ -24,48 +23,60 @@ public class ImageView extends JPanel
 	}
 	
 	@Override
-    public void paintComponent(Graphics g)
-    {
-    
+	public void paintComponent(Graphics g)
+	{
+	
 		super.paintComponent(g);	
 		
 		int xStart;
 		int yStart;
 		int resizedWidth;
 		int resizedHeight;
+		double widthRatio;
+		double heightRatio;
+		double widthScaledByZoomRatio;
+		double heightScaledByZoomRatio;
 		
 		Dimension size = this.getSize();
 		int width = (int) size.getWidth();
 		int height = (int) size.getHeight();
 		
+		widthScaledByZoomRatio = (currentImageWidth * zoomRatio);
+		heightScaledByZoomRatio = (currentImageHeight * zoomRatio);
+		
 		if (autoResize)
 		{
 			
-			if ((currentImageWidth <= width) && (currentImageHeight <= height))
+			if ((widthScaledByZoomRatio <= width) && (heightScaledByZoomRatio <= height))
 			{
-
-				xStart = (int) (Math.floor((width / 2) - (currentImageWidth / 2)));
-				yStart = (int) (Math.floor((height / 2) - (currentImageHeight / 2)));
+	
+				xStart = (int) (Math.floor((width / 2) - 
+						((currentImageWidth / 2) * zoomRatio)));
+				yStart = (int) (Math.floor((height / 2) - 
+						((currentImageHeight / 2) * zoomRatio)));
 				
-				g.drawImage(currentImage, xStart, yStart, null);
+				g.drawImage(currentImage, xStart, yStart,
+						xStart + (int) widthScaledByZoomRatio,
+						yStart + (int) heightScaledByZoomRatio, 0, 0,
+						currentImageWidth, currentImageHeight, null);
 			}
 			else
 			{
 				
-				widthRatio = ((double) width / currentImageWidth);
-				heightRatio = ((double) height / currentImageHeight);
-
+				widthRatio = (width / widthScaledByZoomRatio);
+				heightRatio = (height / heightScaledByZoomRatio);
+	
 				if (widthRatio <= heightRatio)
 				{
 					
-					resizedWidth = (int) (currentImageWidth * widthRatio);
-					resizedHeight = (int) (currentImageHeight * widthRatio);
+					resizedWidth = (int) (widthScaledByZoomRatio * widthRatio);
+					resizedHeight = (int) (heightScaledByZoomRatio * widthRatio);
 				}
 				else
 				{
-
-					resizedWidth = (int) (currentImageWidth * heightRatio);
-					resizedHeight = (int) (currentImageHeight * heightRatio);
+	
+					resizedWidth = (int) (widthScaledByZoomRatio * heightRatio);
+					resizedHeight = (int) (heightScaledByZoomRatio * heightRatio);
 				}
 				
 				xStart = (int) (Math.floor((width / 2) - (resizedWidth / 2)));
@@ -79,12 +90,15 @@ public class ImageView extends JPanel
 		else
 		{
 			
-			xStart = (int) (Math.floor((width / 2) - (currentImageWidth / 2)));
-			yStart = (int) (Math.floor((height / 2) - (currentImageHeight / 2)));
+			xStart = (int) (Math.floor((width / 2) - 
+					((currentImageWidth / 2) * zoomRatio)));
+			yStart = (int) (Math.floor((height / 2) - 
+					((currentImageHeight / 2) * zoomRatio)));
 			
-			g.drawImage(currentImage, xStart, yStart, null);
+			g.drawImage(currentImage, xStart, yStart, xStart + (int) widthScaledByZoomRatio, yStart + (int) heightScaledByZoomRatio, 0, 0, currentImageWidth, currentImageHeight, null);
+			//g.drawImage(currentImage, xStart, yStart, null);
 		}
-    }
+	}
 	
 	public void setAutoResize(boolean turnOnAutoResize) {autoResize = turnOnAutoResize;}
 	
@@ -95,5 +109,11 @@ public class ImageView extends JPanel
 		currentImageWidth = image.getWidth();
 		currentImageHeight = image.getHeight();
 		paintComponent(this.getGraphics());
+	}
+	
+	public void setZoomRatio(double zoomRatio)
+	{
+		
+		this.zoomRatio = zoomRatio;
 	}
 }

@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -30,6 +31,7 @@ public class ViewerController {
 	private ViewerView applicationView;
 	private ImageView imageView;
 	private List<File> files;
+	private int currentImageIndex;
 	
 	/**
 	 * 
@@ -128,6 +130,15 @@ public class ViewerController {
 		}
 	}
 	
+	public int calculateMinimumWidth()
+	{
+		
+		
+		return (applicationView.getFilePathLabel()
+				.getSize().width + applicationView
+				.getZoomSlider().getWidth() + 200); //Invisible 100px horizontal strut * 2 added into new width.
+	}
+	
 	/**
 	 * 
 	 */
@@ -172,7 +183,18 @@ public class ViewerController {
 						files.add(file);
 					}
 					
-					imageView.setCurrentImage(loadImageFromFile(files.get(0)));
+					currentImageIndex = 0;
+					imageView.setCurrentImage(loadImageFromFile(files.get(currentImageIndex)));
+				
+					applicationView.getFilePathLabel().setText(files
+							.get(currentImageIndex).getPath());
+
+					applicationView.getApplicationFrame().revalidate();
+					
+					applicationView.getApplicationFrame().setMinimumSize(
+							new Dimension(calculateMinimumWidth(),
+									applicationView.getApplicationFrame()
+									.getMinimumSize().height)); 					
 				}
 			}			
 		});

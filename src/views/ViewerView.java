@@ -18,6 +18,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
@@ -63,6 +64,13 @@ public class ViewerView
 	
 	/*Bottom Tool Bar identifier.*/
 	private JLabel filePathLabel; 
+	private JLabel zoomLabel;
+	private JLabel zoomMinusLabel;
+	private JSlider zoomSlider;
+	private JLabel zoomPlusLabel;
+	private static final int ZOOM_MIN = 1;
+	private static final int ZOOM_INIT = 100;
+	private static final int ZOOM_MAX = 800;
 	
 	/**
 	 * 
@@ -134,13 +142,30 @@ public class ViewerView
 		
 		imageView = new ImageView();
 		imageView.setAutoResize(true);
+		imageView.setZoomRatio(1);
 		
+		/*Bottom tool bar for application.*/
 		bottomMenuBar = new JMenuBar();
-		filePathLabel = new JLabel(" ");
+		filePathLabel = new JLabel();
 		bottomMenuBar.add(filePathLabel);
+		
+		bottomMenuBar.add(Box.createHorizontalStrut(100));
 		bottomMenuBar.add(Box.createHorizontalGlue());
 
-		/*Layout constraints for the main application panel.*/
+		/* Zoom slider components for bottom tool bar.*/
+		zoomLabel = new JLabel("Zoom: ");
+		zoomMinusLabel = new JLabel("-");
+		zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, ZOOM_INIT);
+		zoomSlider.setMaximumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
+		zoomSlider.setMinimumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
+		zoomPlusLabel = new JLabel("+");
+		
+		bottomMenuBar.add(zoomLabel);
+		bottomMenuBar.add(zoomMinusLabel);
+		bottomMenuBar.add(zoomSlider);
+		bottomMenuBar.add(zoomPlusLabel);
+		
+		/*Layout constraints for the main image view panel.*/
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -148,8 +173,7 @@ public class ViewerView
 		constraints.gridheight = 1;
 		constraints.weighty = 1.0;
 		constraints.fill = GridBagConstraints.BOTH;
-		constraints.anchor = GridBagConstraints.FIRST_LINE_START;
-		
+		constraints.anchor = GridBagConstraints.FIRST_LINE_START;	
 		applicationFrame.add(imageView, constraints);
 		
 		/*Layout constraints for the bottom menu bar.*/
@@ -188,7 +212,11 @@ public class ViewerView
 
 	public JLabel getFilePathLabel() {return filePathLabel;}
 
+	public JSlider getZoomSlider() {return zoomSlider;}
+
 	public ImageView getImageView() {return imageView;}
 	
 	public JFrame getApplicationFrame(){return applicationFrame;}
+
+	public void setFilePathLabel(JLabel filePath) {filePathLabel = filePath;}
 }
