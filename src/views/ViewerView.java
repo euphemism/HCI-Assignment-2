@@ -74,7 +74,7 @@ public class ViewerView
 		
 		/*Main application window.*/
 		applicationFrame = new JFrame();
-		applicationFrame.setTitle("picture viewer");
+		applicationFrame.setTitle("Picture Viewer");
 		applicationFrame.setSize(800, 600);
 		applicationFrame.setMinimumSize(new Dimension(350, 200));
 		applicationFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -85,12 +85,12 @@ public class ViewerView
 		menuBar = new JMenuBar();
 		
 		/*File menu for menu bar.*/
-		fileMenu = new JMenu("file");
+		fileMenu = new JMenu("File");
 		fileMenu.getAccessibleContext().setAccessibleDescription("File menu.");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		
-		fileMenuOpen = new JMenuItem("open", KeyEvent.VK_O); //Mnemonic: 'O'pen
-		fileMenuExit = new JMenuItem("exit", KeyEvent.VK_E); //Mnemonic: 'E'xit
+		fileMenuOpen = new JMenuItem("Open", KeyEvent.VK_O); //Mnemonic: 'O'pen
+		fileMenuExit = new JMenuItem("Exit", KeyEvent.VK_E); //Mnemonic: 'E'xit
 		
 		fileMenu.addSeparator();
 		fileMenu.add(fileMenuOpen);
@@ -101,7 +101,7 @@ public class ViewerView
 		menuBar.add(Box.createHorizontalGlue());
 
 		/*Help menu for menu bar.*/
-		helpMenu = new JMenu("help");
+		helpMenu = new JMenu("Help");
 		helpMenu.getAccessibleContext().setAccessibleDescription("Help menu.");
 		helpMenu.setMnemonic(KeyEvent.VK_H);
 		menuBar.add(helpMenu);
