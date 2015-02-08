@@ -117,5 +117,6 @@ public class ImageView extends JPanel
 	{
 		
 		this.zoomRatio = zoomRatio;
+		this.repaint();
 	}
 }

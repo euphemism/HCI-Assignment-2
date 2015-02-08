@@ -75,7 +75,7 @@ public class ViewerView
 	private JLabel zoomMinusLabel;
 	private JSlider zoomSlider;
 	private JLabel zoomPlusLabel;
-	private static final int ZOOM_MIN = 1;
+	private static final int ZOOM_MIN = 0;
 	private static final int ZOOM_INIT = 100;
 	private static final int ZOOM_MAX = 800;
 	
@@ -148,8 +148,6 @@ public class ViewerView
 		applicationFrame.setJMenuBar(menuBar);
 		
 		imageView = new ImageView();
-		imageView.setAutoResize(true);
-		imageView.setZoomRatio(1);
 		
 		/*Bottom tool bar for application.*/
 		bottomMenuBar = new JMenuBar();
@@ -189,6 +187,10 @@ public class ViewerView
 		zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, ZOOM_INIT);
 		zoomSlider.setMaximumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
 		zoomSlider.setMinimumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
+		zoomSlider.setMajorTickSpacing(100);
+		zoomSlider.setMinorTickSpacing(10);
+		zoomSlider.setSnapToTicks(true);
+		zoomSlider.setPaintTicks(true);
 		zoomPlusLabel = new JLabel("+");
 		
 		bottomMenuBar.add(zoomLabel);
@@ -244,6 +246,10 @@ public class ViewerView
 	public JLabel getFilePathLabel() {return filePathLabel;}
 
 	public JLabel getFileIndexLabel() {return fileIndexLabel;}
+
+	public JLabel getZoomLabel() {
+		return zoomLabel;
+	}
 
 	public JButton getPreviousButton() {return previousButton;}
 
