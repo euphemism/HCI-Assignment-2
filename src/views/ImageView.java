@@ -95,8 +95,10 @@ public class ImageView extends JPanel
 			yStart = (int) (Math.floor((height / 2) - 
 					((currentImageHeight / 2) * zoomRatio)));
 			
-			g.drawImage(currentImage, xStart, yStart, xStart + (int) widthScaledByZoomRatio, yStart + (int) heightScaledByZoomRatio, 0, 0, currentImageWidth, currentImageHeight, null);
-			//g.drawImage(currentImage, xStart, yStart, null);
+			g.drawImage(currentImage, xStart, yStart, xStart + (int)
+					widthScaledByZoomRatio, yStart + (int)
+					heightScaledByZoomRatio, 0, 0, currentImageWidth,
+					currentImageHeight, null);
 		}
 	}
 	

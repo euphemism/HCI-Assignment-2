@@ -68,7 +68,7 @@ public class ViewerView
 	
 	/*Bottom Tool Bar identifier.*/
 	private JLabel filePathLabel; 
-	private JLabel navigationLabel;
+	private JLabel fileIndexLabel;
 	private JButton previousButton;
 	private JButton nextButton;
 	private JLabel zoomLabel;
@@ -155,13 +155,15 @@ public class ViewerView
 		bottomMenuBar = new JMenuBar();
 		filePathLabel = new JLabel();
 		bottomMenuBar.add(filePathLabel);
-		
+
 		bottomMenuBar.add(Box.createHorizontalStrut(100));
 		bottomMenuBar.add(Box.createHorizontalGlue());
-
-		/*Navigation components for bottom tool bar.*/
-		navigationLabel = new JLabel("Navigation: ");
 		
+		fileIndexLabel = new JLabel();
+		bottomMenuBar.add(fileIndexLabel);
+		bottomMenuBar.add(Box.createHorizontalStrut(10));
+		
+		/*Navigation components for bottom tool bar.*/
 		previousButton = new JButton();
 		nextButton = new JButton();
 		try {
@@ -241,11 +243,15 @@ public class ViewerView
 
 	public JLabel getFilePathLabel() {return filePathLabel;}
 
+	public JLabel getFileIndexLabel() {return fileIndexLabel;}
+
+	public JButton getPreviousButton() {return previousButton;}
+
+	public JButton getNextButton() {return nextButton;}
+
 	public JSlider getZoomSlider() {return zoomSlider;}
 
 	public ImageView getImageView() {return imageView;}
 	
 	public JFrame getApplicationFrame(){return applicationFrame;}
-
-	public void setFilePathLabel(JLabel filePath) {filePathLabel = filePath;}
 }

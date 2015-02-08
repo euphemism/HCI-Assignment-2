@@ -133,6 +133,26 @@ public class ViewerController {
 			return null;
 		}
 	}
+	
+	public void updateLoadedImage()
+	{
+		
+		imageView.setCurrentImage(loadImageFromFile(files.get(currentImageIndex)));
+		
+		applicationView.getFilePathLabel().setText(files
+				.get(currentImageIndex).getPath());
+		
+		applicationView.getFileIndexLabel().setText(
+				String.valueOf(currentImageIndex + 1) + "/" +
+						String.valueOf(files.size()));
+
+		applicationView.getApplicationFrame().revalidate();
+		
+		applicationView.getApplicationFrame().setMinimumSize(
+				new Dimension(applicationView.getBottomMenuBar()
+				.getPreferredSize().width, applicationView
+				.getApplicationFrame().getMinimumSize().height));
+	}
 
 	/**
 	 * 
@@ -176,17 +196,7 @@ public class ViewerController {
 						files.add(file);
 					
 					currentImageIndex = 0;
-					imageView.setCurrentImage(loadImageFromFile(files.get(currentImageIndex)));
-				
-					applicationView.getFilePathLabel().setText(files
-							.get(currentImageIndex).getPath());
-
-					applicationView.getApplicationFrame().revalidate();
-					
-					applicationView.getApplicationFrame().setMinimumSize(
-							new Dimension(applicationView.getBottomMenuBar()
-							.getPreferredSize().width, applicationView
-							.getApplicationFrame().getMinimumSize().height)); 					
+					updateLoadedImage();
 				}
 			}			
 		});
@@ -228,6 +238,38 @@ public class ViewerController {
 				else
 					imageView.setBackground(Color.BLACK);
 			}	
+		});
+		
+		/*Implementing listener for the previous image button on the bottom tool bar.*/
+		applicationView.getPreviousButton().addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				if (0 < currentImageIndex)	
+					currentImageIndex--;
+				else
+					currentImageIndex = (files.size() - 1);
+				
+				updateLoadedImage();
+			}
+		});
+
+		/*Implementing listener for the next image button on the bottom tool bar.*/
+		applicationView.getNextButton().addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				if (currentImageIndex < (files.size() - 1))
+					currentImageIndex++;
+				else
+					currentImageIndex = 0;
+				
+				updateLoadedImage();
+			}
 		});
 		
 		applicationView.getApplicationFrame().setVisible(true);
