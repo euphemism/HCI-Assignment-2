@@ -27,9 +27,14 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import views.ImageView;
 import views.ViewerView;
@@ -189,12 +194,12 @@ public class ViewerController {
 				String.valueOf(currentImageIndex + 1) + "/" +
 						String.valueOf(files.size()));
 
-		applicationView.getApplicationFrame().revalidate();
+		applicationView.revalidate();
 		
-		applicationView.getApplicationFrame().setMinimumSize(
+		applicationView.setMinimumSize(
 				new Dimension(applicationView.getBottomMenuBar()
 				.getPreferredSize().width, applicationView
-				.getApplicationFrame().getMinimumSize().height));
+				.getMinimumSize().height));
 	}
 
 	/**
@@ -212,8 +217,8 @@ public class ViewerController {
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) 
 			{
-				  
-				if (e.getID() == e.KEY_RELEASED)
+				  				
+				if (e.getID() == KeyEvent.KEY_RELEASED)
 					switch (e.getKeyCode())
 					{
 					
@@ -285,9 +290,25 @@ public class ViewerController {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				applicationView.getApplicationFrame().dispose();
+				applicationView.dispose();
 				System.exit(0);
 			}
+		});
+
+		/*Implementing listener for the auto-resize check box view menu item.*/
+		applicationView.getViewMenuPreviousImage().addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {changeCurrentIndex(false);}	
+		});
+		
+		/*Implementing listener for the auto-resize check box view menu item.*/
+		applicationView.getViewMenuNextImage().addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {changeCurrentIndex(true);}
 		});
 		
 		/*Implementing listener for the auto-resize check box view menu item.*/
@@ -371,13 +392,7 @@ public class ViewerController {
 				
 				JSlider source = (JSlider) arg0.getSource();
 				
-				if (source.getValueIsAdjusting())
-				{
-
-					applicationView.getZoomLabel().setText("Zoom: " + String.valueOf(source.getValue()) + "%");
-
-				}
-				
+				applicationView.getZoomTextField().setText(source.getValue() + "%");
 				imageView.setZoomRatio((double) source.getValue() / 100);
 			}	
 		});
@@ -397,6 +412,6 @@ public class ViewerController {
 				
 		}});
 		
-		applicationView.getApplicationFrame().setVisible(true);
+		applicationView.setVisible(true);
 	}
 }

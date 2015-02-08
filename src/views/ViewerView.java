@@ -3,8 +3,11 @@ package views;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -15,6 +18,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JTextField;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,7 +42,7 @@ import com.sun.glass.events.KeyEvent;
  * @author Nicholas
  *
  */
-public class ViewerView
+public class ViewerView extends javax.swing.JFrame
 {
 
 	/*Application Frame identifiers.*/
@@ -49,7 +53,7 @@ public class ViewerView
 	JFileChooser fileChooser;
 	
 	/*Menu Bar identifiers.*/
-	private JMenuBar menuBar;
+	private JMenuBar mainMenuBar;
 	private JMenuBar bottomMenuBar;
 	
 	/*File Menu identifiers.*/
@@ -59,6 +63,8 @@ public class ViewerView
 	
 	/*View Menu Identifiers*/
 	private JMenu viewMenu;
+	private JMenuItem viewMenuPreviousImage;
+	private JMenuItem viewMenuNextImage;
 	private JCheckBoxMenuItem viewMenuAutoResizeCheckBox;
 	private JMenuItem viewMenuInvertBackground;
 	
@@ -72,6 +78,7 @@ public class ViewerView
 	private JButton previousButton;
 	private JButton nextButton;
 	private JLabel zoomLabel;
+	private JTextField zoomTextField;
 	private JLabel zoomMinusLabel;
 	private JSlider zoomSlider;
 	private JLabel zoomPlusLabel;
@@ -97,16 +104,15 @@ public class ViewerView
 		}
 		
 		/*Main application window.*/
-		applicationFrame = new JFrame();
-		applicationFrame.setTitle("Picture Viewer");
-		applicationFrame.setSize(800, 600);
-		applicationFrame.setMinimumSize(new Dimension(350, 200));
-		applicationFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setTitle("Picture Viewer");
+		setSize(800, 600);
+		setMinimumSize(new Dimension(350, 200));
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
-		applicationFrame.setLayout(new GridBagLayout());
+		setLayout(new GridBagLayout());
 		
 		/*Menu bar for application.*/
-		menuBar = new JMenuBar();
+		mainMenuBar = new JMenuBar();
 		
 		/*File menu for menu bar.*/
 		fileMenu = new JMenu("File");
@@ -120,32 +126,38 @@ public class ViewerView
 		fileMenu.add(fileMenuOpen);
 		fileMenu.addSeparator();
 		fileMenu.add(fileMenuExit);
-		menuBar.add(fileMenu);
+		mainMenuBar.add(fileMenu);
 		
 		/*View menu for menu bar.*/
 		viewMenu = new JMenu("View");
 		viewMenu.getAccessibleContext().setAccessibleDescription("View menu");
 		viewMenu.setMnemonic(KeyEvent.VK_V); //Mnemonic: 'V'iew
 		
+		viewMenuPreviousImage = new JMenuItem("Previous image", KeyEvent.VK_P); //Mnemonic: 'P'revious
+		viewMenuNextImage = new JMenuItem("Next image", KeyEvent.VK_N); //Mnemonic: 'N'ext
+
 		viewMenuAutoResizeCheckBox = new JCheckBoxMenuItem("Auto-resize image");
 		viewMenuAutoResizeCheckBox.setMnemonic(KeyEvent.VK_A); //Mnemonic: 'A'uto-resize
 		viewMenuAutoResizeCheckBox.setSelected(true);
 		
 		viewMenuInvertBackground = new JMenuItem("Invert viewer background", KeyEvent.VK_I); //Mnemonic: 'I'nvert
 		
+		viewMenu.add(viewMenuPreviousImage);
+		viewMenu.add(viewMenuNextImage);
+		viewMenu.addSeparator();
 		viewMenu.add(viewMenuAutoResizeCheckBox);
 		viewMenu.add(viewMenuInvertBackground);
-		menuBar.add(viewMenu);
+		mainMenuBar.add(viewMenu);
 		
-		menuBar.add(Box.createHorizontalGlue());
+		mainMenuBar.add(Box.createHorizontalGlue());
 
 		/*Help menu for menu bar.*/
 		helpMenu = new JMenu("Help");
 		helpMenu.getAccessibleContext().setAccessibleDescription("Help menu.");
 		helpMenu.setMnemonic(KeyEvent.VK_H);
-		menuBar.add(helpMenu);
+		mainMenuBar.add(helpMenu);
 		
-		applicationFrame.setJMenuBar(menuBar);
+		setJMenuBar(mainMenuBar);
 		
 		imageView = new ImageView();
 		
@@ -183,7 +195,14 @@ public class ViewerView
 		
 		/*Zoom slider components for bottom tool bar.*/
 		zoomLabel = new JLabel("Zoom: ");
+		zoomTextField = new JTextField(4);
+		zoomTextField.setText("100%");
+		zoomTextField.setEditable(false);
+		zoomTextField.setMinimumSize(new Dimension(zoomTextField.getPreferredSize().width, zoomTextField.getPreferredSize().height));
+		zoomTextField.setMaximumSize(new Dimension(zoomTextField.getPreferredSize().width, zoomTextField.getPreferredSize().height));
+
 		zoomMinusLabel = new JLabel("-");
+		
 		zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, ZOOM_INIT);
 		zoomSlider.setMaximumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
 		zoomSlider.setMinimumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
@@ -191,9 +210,12 @@ public class ViewerView
 		zoomSlider.setMinorTickSpacing(10);
 		zoomSlider.setSnapToTicks(true);
 		zoomSlider.setPaintTicks(true);
+		
 		zoomPlusLabel = new JLabel("+");
 		
 		bottomMenuBar.add(zoomLabel);
+		bottomMenuBar.add(zoomTextField);
+		bottomMenuBar.add(Box.createHorizontalStrut(10));
 		bottomMenuBar.add(zoomMinusLabel);
 		bottomMenuBar.add(zoomSlider);
 		bottomMenuBar.add(zoomPlusLabel);
@@ -207,8 +229,8 @@ public class ViewerView
 		constraints.weighty = 1.0;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.FIRST_LINE_START;	
-		applicationFrame.add(imageView, constraints);
-		
+		add(imageView, constraints);
+
 		/*Layout constraints for the bottom menu bar.*/
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -218,14 +240,14 @@ public class ViewerView
 		constraints.weightx = 1.0;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.anchor = GridBagConstraints.FIRST_LINE_START;
-		applicationFrame.add(bottomMenuBar, constraints);
+		add(bottomMenuBar, constraints);
 	}
 	
 	public GridBagConstraints getConstraints() {return constraints;}
 	
 	public JFileChooser getFileChooser() {return fileChooser;}
 
-	public JMenuBar getMenuBar() {return menuBar;}
+	public JMenuBar getMainMenuBar() {return mainMenuBar;}
 	
 	public JMenuBar getBottomMenuBar() {return bottomMenuBar;}
 
@@ -239,6 +261,10 @@ public class ViewerView
 
 	public JMenu getViewMenu() {return viewMenu;}
 
+	public JMenuItem getViewMenuPreviousImage() {return viewMenuPreviousImage;}
+
+	public JMenuItem getViewMenuNextImage() {return viewMenuNextImage;}
+
 	public JCheckBoxMenuItem getViewMenuAutoResizeCheckBox() {return viewMenuAutoResizeCheckBox;}
 
 	public JMenuItem getViewMenuInvertBackground() {return viewMenuInvertBackground;}
@@ -247,9 +273,7 @@ public class ViewerView
 
 	public JLabel getFileIndexLabel() {return fileIndexLabel;}
 
-	public JLabel getZoomLabel() {
-		return zoomLabel;
-	}
+	public JTextField getZoomTextField() {return zoomTextField;}
 
 	public JButton getPreviousButton() {return previousButton;}
 
