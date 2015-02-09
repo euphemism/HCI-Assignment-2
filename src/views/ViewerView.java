@@ -102,7 +102,7 @@ public class ViewerView extends javax.swing.JFrame
 
 			e.printStackTrace();
 		}
-		
+				
 		/*Main application window.*/
 		setTitle("Picture Viewer");
 		setSize(800, 600);

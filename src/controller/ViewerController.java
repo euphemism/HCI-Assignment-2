@@ -1,9 +1,12 @@
 package controller;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -26,6 +29,7 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
@@ -226,21 +230,21 @@ public class ViewerController {
 						{
 							
 							changeCurrentIndex(false);
-							return true;
+							return false;
 						}
 								
 						case KeyEvent.VK_RIGHT:
 						{
 										
 							changeCurrentIndex(true);
-							return true;
+							return false;
 						}
 								
 						default:
-							return true;
+							return false;
 					}	
 				else
-					return true;
+					return false;
 			}
 		});
 		
@@ -366,6 +370,51 @@ public class ViewerController {
 			}
 		});
 		
+		/*Implementing listener for dragging the image on the image view panel.*/
+		imageView.addMouseMotionListener(new MouseAdapter()
+		{
+			
+			@Override
+            public void mouseMoved(MouseEvent e)
+			{
+				
+                imageView.setLastMouseX(e.getX());
+                imageView.setLastMouseY(e.getY());
+			}
+
+            @Override
+            public void mouseDragged(MouseEvent e)
+            {
+  
+            	if (! imageView.getIsDraggable())
+            		return;
+            	
+            	imageView.setXOffset(imageView.getLastXOffset() +
+            			(e.getX() - imageView.getLastMouseX()));
+            	imageView.setYOffset(imageView.getLastYOffset() + 
+            			(e.getY() - imageView.getLastMouseY()));
+
+            	imageView.paintComponent(imageView.getGraphics());
+            	
+				if (! (imageView.getCursor().getType() == Cursor.MOVE_CURSOR))
+					imageView.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            }
+		});
+		
+		imageView.addMouseListener(new MouseAdapter()
+		{
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+
+				if (imageView.getCursor().getType() == Cursor.MOVE_CURSOR)
+					imageView.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				
+                imageView.setLastXOffset(imageView.getXOffset());
+                imageView.setLastYOffset(imageView.getYOffset());
+			}		
+		});
+		
 		/*Implementing listener for the previous image button on the bottom tool bar.*/
 		applicationView.getPreviousButton().addActionListener(new ActionListener()
 		{
@@ -413,5 +462,6 @@ public class ViewerController {
 		}});
 		
 		applicationView.setVisible(true);
+		//GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(applicationView);
 	}
 }
