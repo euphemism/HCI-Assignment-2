@@ -3,13 +3,7 @@ package views;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.MenuBar;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -25,16 +19,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
-import javax.swing.filechooser.FileFilter;
-
-import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.sun.glass.events.KeyEvent;
 
@@ -45,6 +33,11 @@ import com.sun.glass.events.KeyEvent;
 public class ViewerView extends javax.swing.JFrame
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1008356999338809798L;
+	
 	/*Application Frame identifiers.*/
 	private JFrame applicationFrame;
 	private GridBagConstraints constraints;
@@ -104,7 +97,7 @@ public class ViewerView extends javax.swing.JFrame
 		}
 				
 		/*Main application window.*/
-		setTitle("Picture Viewer");
+		setTitle("Cafallery");//setTitle("Picture Viewer");
 		setSize(800, 600);
 		setMinimumSize(new Dimension(350, 200));
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -197,7 +190,7 @@ public class ViewerView extends javax.swing.JFrame
 		zoomLabel = new JLabel("Zoom: ");
 		zoomTextField = new JTextField(4);
 		zoomTextField.setText("100%");
-		zoomTextField.setEditable(false);
+		zoomTextField.setEditable(true);
 		zoomTextField.setMinimumSize(new Dimension(zoomTextField.getPreferredSize().width, zoomTextField.getPreferredSize().height));
 		zoomTextField.setMaximumSize(new Dimension(zoomTextField.getPreferredSize().width, zoomTextField.getPreferredSize().height));
 

@@ -3,20 +3,15 @@ package controller;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
@@ -29,16 +24,10 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.JToolTip;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 import views.ImageView;
 import views.ViewerView;
@@ -183,6 +172,9 @@ public class ViewerController {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void updateLoadedImage()
 	{
 		
@@ -190,6 +182,8 @@ public class ViewerController {
 			return;
 		
 		imageView.setCurrentImage(loadImageFromFile(files.get(currentImageIndex)));
+		applicationView.getZoomSlider().setValue(100);
+		imageView.setZoomRatio(1);
 		
 		applicationView.getFilePathLabel().setText(files
 				.get(currentImageIndex).getPath());
@@ -204,8 +198,85 @@ public class ViewerController {
 				new Dimension(applicationView.getBottomMenuBar()
 				.getPreferredSize().width, applicationView
 				.getMinimumSize().height));
+		
+		recalculateImagePositioning();
 	}
+	
+	public void recalculateImagePositioning()
+	{
+			
+		int currentImageWidth;
+		int currentImageHeight;
+		int resizedWidth;
+		int resizedHeight;
+		double widthRatio;
+		double heightRatio;
+		double widthScaledByZoomRatio;
+		double heightScaledByZoomRatio;
+		double zoomRatio;
 
+		Dimension size = imageView.getSize();
+		int width = (int) size.getWidth();
+		int height = (int) size.getHeight();
+		
+		zoomRatio = imageView.getZoomRatio();
+		currentImageWidth = imageView.getCurrentImageWidth();
+		currentImageHeight = imageView.getCurrentImageHeight();
+		
+		widthScaledByZoomRatio = (currentImageWidth * zoomRatio);
+		heightScaledByZoomRatio = (currentImageHeight * zoomRatio);
+		
+		if (imageView.getAutoResize())
+		{
+			
+			if ((widthScaledByZoomRatio <= width) && (heightScaledByZoomRatio <= height))
+			{
+	
+				imageView.setXStart((int) (Math.floor((width / 2) - ((currentImageWidth / 2) * zoomRatio))));
+				imageView.setYStart((int) (Math.floor((height / 2) - ((currentImageHeight / 2) * zoomRatio))));
+	
+				imageView.setXEnd(imageView.getXStart() + (int) widthScaledByZoomRatio);
+				imageView.setYEnd(imageView.getYStart() + (int) heightScaledByZoomRatio);
+			}
+			else
+			{
+				
+				widthRatio = (width / widthScaledByZoomRatio);
+				heightRatio = (height / heightScaledByZoomRatio);
+	
+				if (widthRatio <= heightRatio)
+				{
+					
+					resizedWidth = (int) (widthScaledByZoomRatio * widthRatio);
+					resizedHeight = (int) (heightScaledByZoomRatio * widthRatio);
+				}
+				else
+				{
+	
+					resizedWidth = (int) (widthScaledByZoomRatio * heightRatio);
+					resizedHeight = (int) (heightScaledByZoomRatio * heightRatio);
+				}
+				
+				imageView.setXStart((int) (Math.floor((width / 2) - (resizedWidth / 2))));
+				imageView.setYStart((int) (Math.floor((height / 2) - (resizedHeight / 2))));
+				
+				imageView.setXEnd(imageView.getXStart() + resizedWidth);
+				imageView.setYEnd(imageView.getYStart() + resizedHeight);
+			}
+		}
+		else
+		{
+	
+			imageView.setXStart(((int) (Math.floor((width / 2) - ((currentImageWidth / 2) * zoomRatio)) + imageView.getXOffset())));
+			imageView.setYStart(((int) (Math.floor((height / 2) - ((currentImageHeight / 2) * zoomRatio)) + imageView.getYOffset())));
+			
+			imageView.setXEnd(imageView.getXStart() + (int) widthScaledByZoomRatio);
+			imageView.setYEnd(imageView.getYStart() + (int) heightScaledByZoomRatio);			
+		}		
+		
+		imageView.repaint();
+	}
+	
 	/**
 	 * 
 	 */
@@ -324,7 +395,7 @@ public class ViewerController {
 			
 				imageView.setAutoResize(applicationView.getViewMenuAutoResizeCheckBox()
 						.isSelected() ? true : false);
-				imageView.paintComponent(imageView.getGraphics());
+				recalculateImagePositioning();
 			}	
 		});
 		
@@ -340,6 +411,14 @@ public class ViewerController {
 				else
 					imageView.setBackground(Color.BLACK);
 			}	
+		});
+		
+		/*Implementing listener for resizing the image view panel.*/
+		imageView.addComponentListener(new ComponentAdapter()
+		{
+			
+			@Override
+			public void componentResized(ComponentEvent e) {recalculateImagePositioning();}
 		});
 		
 		/*Implementing listener for clicking on the image view panel.*/
@@ -394,7 +473,7 @@ public class ViewerController {
             	imageView.setYOffset(imageView.getLastYOffset() + 
             			(e.getY() - imageView.getLastMouseY()));
 
-            	imageView.paintComponent(imageView.getGraphics());
+            	recalculateImagePositioning();
             	
 				if (! (imageView.getCursor().getType() == Cursor.MOVE_CURSOR))
 					imageView.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -443,23 +522,9 @@ public class ViewerController {
 				
 				applicationView.getZoomTextField().setText(source.getValue() + "%");
 				imageView.setZoomRatio((double) source.getValue() / 100);
+				recalculateImagePositioning();
 			}	
 		});
-		
-		applicationView.getZoomSlider().addMouseMotionListener(new MouseMotionListener()
-		{
-
-			@Override
-			public void mouseDragged(MouseEvent arg0) {
-
-
-			}
-
-			@Override
-			public void mouseMoved(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-		}});
 		
 		applicationView.setVisible(true);
 		//GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(applicationView);

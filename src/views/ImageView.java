@@ -1,7 +1,6 @@
 package views;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -11,21 +10,14 @@ import javax.swing.JPanel;
  * @author Nicholas
  *
  */
-/**
- * @author Nicholas
- *
- */
-/**
- * @author Nicholas
- *
- */
-/**
- * @author Nicholas
- *
- */
 public class ImageView extends JPanel
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2963675488872291438L;
+	
 	private BufferedImage currentImage;
 	private int currentImageWidth;
 	private int currentImageHeight;
@@ -35,6 +27,10 @@ public class ImageView extends JPanel
 	private int lastYOffset;
 	private int xOffset;
 	private int yOffset;
+	private int xStart;
+	private int yStart;
+	private int xEnd;
+	private int yEnd;
 	private boolean autoResize;
 	private boolean isDraggable;
 	private double zoomRatio;	
@@ -60,134 +56,95 @@ public class ImageView extends JPanel
 	
 		super.paintComponent(g);	
 		
-		int xStart;
-		int yStart;
-		int resizedWidth;
-		int resizedHeight;
-		double widthRatio;
-		double heightRatio;
-		double widthScaledByZoomRatio;
-		double heightScaledByZoomRatio;
-		
-		Dimension size = getSize();
-		int width = (int) size.getWidth();
-		int height = (int) size.getHeight();
-		
-		widthScaledByZoomRatio = (currentImageWidth * zoomRatio);
-		heightScaledByZoomRatio = (currentImageHeight * zoomRatio);
-		
-		if (autoResize)
-		{
-			
-			if ((widthScaledByZoomRatio <= width) && (heightScaledByZoomRatio <= height))
-			{
-	
-				xStart = (int) (Math.floor((width / 2) - 
-						((currentImageWidth / 2) * zoomRatio)));
-				yStart = (int) (Math.floor((height / 2) - 
-						((currentImageHeight / 2) * zoomRatio)));
-				
-				g.drawImage(currentImage, xStart, yStart,
-						xStart + (int) widthScaledByZoomRatio,
-						yStart + (int) heightScaledByZoomRatio, 0, 0,
-						currentImageWidth, currentImageHeight, null);
-			}
-			else
-			{
-				
-				widthRatio = (width / widthScaledByZoomRatio);
-				heightRatio = (height / heightScaledByZoomRatio);
-	
-				if (widthRatio <= heightRatio)
-				{
-					
-					resizedWidth = (int) (widthScaledByZoomRatio * widthRatio);
-					resizedHeight = (int) (heightScaledByZoomRatio * widthRatio);
-				}
-				else
-				{
-	
-					resizedWidth = (int) (widthScaledByZoomRatio * heightRatio);
-					resizedHeight = (int) (heightScaledByZoomRatio * heightRatio);
-				}
-				
-				xStart = (int) (Math.floor((width / 2) - (resizedWidth / 2)));
-				yStart = (int) (Math.floor((height / 2) - (resizedHeight / 2)));
-				
-				g.drawImage(currentImage, xStart, yStart, xStart + resizedWidth,
-						yStart + resizedHeight, 0, 0, currentImageWidth,
-						currentImageHeight, null);
-			}
-		}
-		else
-		{
-	
-			xStart = (int) (Math.floor((width / 2) - 
-					((currentImageWidth / 2) * zoomRatio)) + xOffset);
-			yStart = (int) (Math.floor((height / 2) - 
-					((currentImageHeight / 2) * zoomRatio)) + yOffset);
-			
-			g.drawImage(currentImage, xStart, yStart, xStart + (int)
-					widthScaledByZoomRatio, yStart + (int)
-					heightScaledByZoomRatio, 0, 0, currentImageWidth,
-					currentImageHeight, null);
-		}
+		g.drawImage(currentImage, xStart, yStart, xEnd, yEnd, 0, 0,
+				currentImageWidth, currentImageHeight, null);
 	}
 	
 	
-	public int getXOffset() {
-		return xOffset;
-	}
+	/**
+	 * @return
+	 */
+	public int getCurrentImageWidth() {return currentImageWidth;}
 
-	public void setXOffset(int xOffset) {
-		
-		this.xOffset = xOffset;
-	}
+	/**
+	 * @param currentImageWidth
+	 */
+	public void setCurrentImageWidth(int currentImageWidth) {this.currentImageWidth = currentImageWidth;}
 
-	public int getYOffset() {
-		return yOffset;
-	}
+	/**
+	 * @return
+	 */
+	public int getCurrentImageHeight() {return currentImageHeight;}
 
-	public void setYOffset(int yOffset) {
-		this.yOffset = yOffset;
-	}
+	/**
+	 * @param currentImageHeight
+	 */
+	public void setCurrentImageHeight(int currentImageHeight) {this.currentImageHeight = currentImageHeight;}
+
+	/**
+	 * @return
+	 */
+	public int getXOffset() {return xOffset;}
+
+	/**
+	 * @param xOffset
+	 */
+	public void setXOffset(int xOffset) {this.xOffset = xOffset;}
+
+	/**
+	 * @return
+	 */
+	public int getYOffset() {return yOffset;}
+
+	/**
+	 * @param yOffset
+	 */
+	public void setYOffset(int yOffset) {this.yOffset = yOffset;}
 
 	/**
 	 * @return
 	 */
 	public boolean getIsDraggable() {return isDraggable;};
 	
-	public int getLastMouseX() {
-		return lastMouseX;
-	}
+	/**
+	 * @return
+	 */
+	public int getLastMouseX() {return lastMouseX;}
 
-	public void setLastMouseX(int lastMouseX) {
-		this.lastMouseX = lastMouseX;
-	}
+	/**
+	 * @param lastMouseX
+	 */
+	public void setLastMouseX(int lastMouseX) {this.lastMouseX = lastMouseX;}
 
-	public int getLastMouseY() {
-		return lastMouseY;
-	}
+	/**
+	 * @return
+	 */
+	public int getLastMouseY() {return lastMouseY;}
 
-	public void setLastMouseY(int lastMouseY) {
-		this.lastMouseY = lastMouseY;
-	}
+	/**
+	 * @param lastMouseY
+	 */
+	public void setLastMouseY(int lastMouseY) {this.lastMouseY = lastMouseY;}
 
-	public int getLastXOffset() {
-		return lastXOffset;
-	}
+	/**
+	 * @return
+	 */
+	public int getLastXOffset() {return lastXOffset;}
 
-	public void setLastXOffset(int lastXOffset) {
-		this.lastXOffset = lastXOffset;
-	}
+	/**
+	 * @param lastXOffset
+	 */
+	public void setLastXOffset(int lastXOffset) {this.lastXOffset = lastXOffset;}
 
-	public int getLastYOffset() {
-		return lastYOffset;
-	}
+	/**
+	 * @return
+	 */
+	public int getLastYOffset() {return lastYOffset;}
 
-	public void setLastYOffset(int lastYOffset) {
-		this.lastYOffset = lastYOffset;
-	}
+	/**
+	 * @param lastYOffset
+	 */
+	public void setLastYOffset(int lastYOffset) {this.lastYOffset = lastYOffset;}
 
 	/**
 	 * 
@@ -197,6 +154,11 @@ public class ImageView extends JPanel
 	
 		lastXOffset = lastYOffset = xOffset = yOffset = 0;
 	}
+	
+	/**
+	 * @return
+	 */
+	public boolean getAutoResize() {return autoResize;}
 	
 	/**
 	 * @param turnOnAutoResize
@@ -218,16 +180,55 @@ public class ImageView extends JPanel
 		currentImage = image;
 		currentImageWidth = image.getWidth();
 		currentImageHeight = image.getHeight();
-		paintComponent(this.getGraphics());
 	}
+	
+	/**
+	 * @return
+	 */
+	public int getXStart() {return xStart;}
+
+	/**
+	 * @param xStart
+	 */
+	public void setXStart(int xStart) {this.xStart = xStart;}
+
+	/**
+	 * @return
+	 */
+	public int getYStart() {return yStart;}
+
+	/**
+	 * @param yStart
+	 */
+	public void setYStart(int yStart) {this.yStart = yStart;}
+
+	/**
+	 * @return
+	 */
+	public int getXEnd() {return xEnd;}
+
+	/**
+	 * @param xEnd
+	 */
+	public void setXEnd(int xEnd) {this.xEnd = xEnd;}
+
+	/**
+	 * @return
+	 */
+	public int getYEnd() {return yEnd;}
+
+	/**
+	 * @param yEnd
+	 */
+	public void setYEnd(int yEnd) {this.yEnd = yEnd;}
+
+	/**
+	 * @return
+	 */
+	public double getZoomRatio() {return zoomRatio;}
 	
 	/**
 	 * @param zoomRatio
 	 */
-	public void setZoomRatio(double zoomRatio)
-	{
-		
-		this.zoomRatio = zoomRatio;
-		this.repaint();
-	}
+	public void setZoomRatio(double zoomRatio) {this.zoomRatio = zoomRatio;}
 }
