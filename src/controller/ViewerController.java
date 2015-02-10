@@ -204,9 +204,7 @@ public class ViewerController {
 	
 	public void recalculateImagePositioning()
 	{
-			
-		int currentImageWidth;
-		int currentImageHeight;
+
 		int resizedWidth;
 		int resizedHeight;
 		double widthRatio;
@@ -220,11 +218,8 @@ public class ViewerController {
 		int height = (int) size.getHeight();
 		
 		zoomRatio = imageView.getZoomRatio();
-		currentImageWidth = imageView.getCurrentImageWidth();
-		currentImageHeight = imageView.getCurrentImageHeight();
-		
-		widthScaledByZoomRatio = (currentImageWidth * zoomRatio);
-		heightScaledByZoomRatio = (currentImageHeight * zoomRatio);
+		widthScaledByZoomRatio = (imageView.getCurrentImageWidth() * zoomRatio);
+		heightScaledByZoomRatio = (imageView.getCurrentImageHeight() * zoomRatio);
 		
 		if (imageView.getAutoResize())
 		{
@@ -232,8 +227,8 @@ public class ViewerController {
 			if ((widthScaledByZoomRatio <= width) && (heightScaledByZoomRatio <= height))
 			{
 	
-				imageView.setXStart((int) (Math.floor((width / 2) - ((currentImageWidth / 2) * zoomRatio))));
-				imageView.setYStart((int) (Math.floor((height / 2) - ((currentImageHeight / 2) * zoomRatio))));
+				imageView.setXStart((int) (Math.floor((width / 2) - (widthScaledByZoomRatio / 2))));
+				imageView.setYStart((int) (Math.floor((height / 2) - (heightScaledByZoomRatio / 2))));
 	
 				imageView.setXEnd(imageView.getXStart() + (int) widthScaledByZoomRatio);
 				imageView.setYEnd(imageView.getYStart() + (int) heightScaledByZoomRatio);
@@ -267,8 +262,8 @@ public class ViewerController {
 		else
 		{
 	
-			imageView.setXStart(((int) (Math.floor((width / 2) - ((currentImageWidth / 2) * zoomRatio)) + imageView.getXOffset())));
-			imageView.setYStart(((int) (Math.floor((height / 2) - ((currentImageHeight / 2) * zoomRatio)) + imageView.getYOffset())));
+			imageView.setXStart(((int) (Math.floor((width / 2) - (widthScaledByZoomRatio / 2)) + imageView.getXOffset())));
+			imageView.setYStart(((int) (Math.floor((height / 2) - (heightScaledByZoomRatio / 2)) + imageView.getYOffset())));
 			
 			imageView.setXEnd(imageView.getXStart() + (int) widthScaledByZoomRatio);
 			imageView.setYEnd(imageView.getYStart() + (int) heightScaledByZoomRatio);			
