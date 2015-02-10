@@ -51,12 +51,7 @@ public class ViewerController {
 	private class LeapListener extends Listener
 	{	
 
-		public void onInit(Controller controller)
-		{
-		
-
-		}
-		
+		@Override
 		public void onConnect(Controller controller)
 		{
 
