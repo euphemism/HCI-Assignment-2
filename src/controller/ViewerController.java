@@ -18,6 +18,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,13 +26,14 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JSlider;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import views.ImageView;
 import views.ViewerView;
 
+import com.leapmotion.leap.*;
+import com.leapmotion.leap.Gesture.State;
 /**
  * @author Nicholas
  *
@@ -40,8 +42,56 @@ public class ViewerController {
 
 	private ViewerView applicationView;
 	private ImageView imageView;
+	private Controller leapController;
 	private List<File> files;
 	private int currentImageIndex;
+	
+	LeapListener listener;
+	
+	private class LeapListener extends Listener
+	{	
+
+		public void onInit(Controller controller)
+		{
+		
+
+		}
+		
+		public void onConnect(Controller controller)
+		{
+
+			controller.enableGesture(Gesture.Type.TYPE_CIRCLE);
+		}
+		
+		@Override
+		public void onFrame(Controller controller)
+		{
+			
+			Frame frame = controller.frame();
+			
+			if (frame.gestures().count() > 0)
+			{
+								
+				for (Iterator<Gesture> it = frame.gestures().iterator(); it.hasNext();)
+				{
+				
+					Gesture gesture = it.next();
+					
+				    if (gesture.state() == State.STATE_STOP)
+				    	if (gesture.type() == Gesture.Type.TYPE_CIRCLE)
+				    	{
+				    		
+				    		CircleGesture circleGesture = new CircleGesture(gesture);
+				    		
+				    		if (circleGesture.pointable().direction().angleTo(circleGesture.normal()) <= Math.PI/2)
+				    			changeCurrentIndex(true);
+				    		else
+				    			changeCurrentIndex(false);
+				    	}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * 
@@ -49,7 +99,7 @@ public class ViewerController {
 	public ViewerController()
 	{
 		
-	
+		listener = new LeapListener();
 	}
 	
 	public void changeCurrentIndex(boolean increaseIndex)
@@ -96,6 +146,12 @@ public class ViewerController {
 		this.imageView = imageView;
 		this.imageView.setAutoResize(true);
 		this.imageView.setZoomRatio(1);
+	}
+	
+	public void setLeapController(Controller leapController)
+	{
+		
+		this.leapController = leapController;
 	}
 	
 	/**
@@ -313,6 +369,9 @@ public class ViewerController {
 					return false;
 			}
 		});
+
+		/*Implement listener for the Leap Motion controller.*/
+		leapController.addListener(listener);
 		
 		/*Implementing listener for the open menu item.*/
 		applicationView.getFileMenuOpen().addActionListener(new ActionListener()
