@@ -3,6 +3,7 @@ package controller;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -25,6 +26,7 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -51,6 +53,14 @@ public class ViewerController {
 	private class LeapListener extends Listener
 	{	
 
+		private long lastImageChange;
+		
+		public LeapListener()
+		{
+			
+			lastImageChange = 0;
+		}
+		
 		@Override
 		public void onConnect(Controller controller)
 		{
@@ -61,28 +71,45 @@ public class ViewerController {
 		@Override
 		public void onFrame(Controller controller)
 		{
-			
+
 			Frame frame = controller.frame();
 			
 			if (frame.gestures().count() > 0)
 			{
-								
+			
 				for (Iterator<Gesture> it = frame.gestures().iterator(); it.hasNext();)
 				{
 				
 					Gesture gesture = it.next();
 					
-				    if (gesture.state() == State.STATE_STOP)
-				    	if (gesture.type() == Gesture.Type.TYPE_CIRCLE)
-				    	{
-				    		
-				    		CircleGesture circleGesture = new CircleGesture(gesture);
-				    		
-				    		if (circleGesture.pointable().direction().angleTo(circleGesture.normal()) <= Math.PI/2)
-				    			changeCurrentIndex(true);
-				    		else
-				    			changeCurrentIndex(false);
-				    	}
+			    	if (gesture.type() == Gesture.Type.TYPE_CIRCLE)
+						switch (gesture.state())
+						{
+						
+							case STATE_UPDATE:
+							{
+
+								long currentTimeMillis = System.currentTimeMillis();
+					    		
+								if ((currentTimeMillis - lastImageChange) > 800)
+								{
+								
+						    		CircleGesture circleGesture = new CircleGesture(gesture);
+						    		
+						    		if (circleGesture.pointable().direction().angleTo(circleGesture.normal()) <= Math.PI/2)
+						    			changeCurrentIndex(true);
+						    		else
+						    			changeCurrentIndex(false);
+						    		
+						    		lastImageChange = currentTimeMillis;
+								}
+
+								break;
+							}	
+							
+							default:
+								break;
+						}
 				}
 			}
 		}
@@ -403,6 +430,9 @@ public class ViewerController {
 					
 					currentImageIndex = 1;
 					changeCurrentIndex(false);
+					//JFrame fullScreenView = new JFrame();
+					//fullScreenView.getContentPane().add(imageView);
+					//GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(fullScreenView);
 				}
 			}			
 		});
