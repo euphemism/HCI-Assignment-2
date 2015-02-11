@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -25,11 +26,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import views.ImageView;
 import views.ViewerView;
@@ -53,12 +59,15 @@ public class ViewerController {
 	private class LeapListener extends Listener
 	{	
 
+		final private int MAXIMUM_WAIT_FOR_CHANGE = 800; //In milliseconds.
+		private int timeToWaitForChange;
 		private long lastImageChange;
 		
 		public LeapListener()
 		{
-			
+
 			lastImageChange = 0;
+			timeToWaitForChange = MAXIMUM_WAIT_FOR_CHANGE;
 		}
 		
 		@Override
@@ -66,6 +75,83 @@ public class ViewerController {
 		{
 
 			controller.enableGesture(Gesture.Type.TYPE_CIRCLE);
+			applicationView.getHelpMenuLeapConnection().setText("Leap Motion connected");
+
+			try {
+				
+				applicationView.getHelpMenuLeapConnection().setIcon(
+						new ImageIcon(ImageIO.read(new File("src/images/connected.png"))));
+			} 
+			catch (IOException e) 
+			{
+			
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		public void onDisconnect(Controller controller)
+		{
+		
+			applicationView.getHelpMenuLeapConnection().setText("Leap Motion disconnected");
+
+			try {
+				
+				applicationView.getHelpMenuLeapConnection().setIcon(
+						new ImageIcon(ImageIO.read(new File("src/images/disconnected.png"))));
+			} 
+			catch (IOException e) 
+			{
+			
+				e.printStackTrace();
+			}			
+		}
+		
+		public double changeCurveFormula(int x)
+		{
+		
+			double result = MAXIMUM_WAIT_FOR_CHANGE - Math.pow((MAXIMUM_WAIT_FOR_CHANGE - (x * 0.85)), 1.005);
+			
+			//System.out.println(MAXIMUM_WAIT_FOR_CHANGE - Math.pow((MAXIMUM_WAIT_FOR_CHANGE - (x * 0.85)), 1.005));
+			if (result < 100)
+				return 100;
+			else
+				return result;
+		}
+		
+		public boolean checkIfReadyToAdvance()
+		{
+	
+			long currentTimeMillis = System.currentTimeMillis();
+			long timeDifference = currentTimeMillis - lastImageChange;
+			
+			
+			if (timeDifference > MAXIMUM_WAIT_FOR_CHANGE)
+			{
+				
+				timeToWaitForChange = MAXIMUM_WAIT_FOR_CHANGE - 50; //(int) changeCurveFormula(MAXIMUM_WAIT_FOR_CHANGE);
+				lastImageChange = currentTimeMillis;
+				return true;
+			}
+			else if (timeDifference > timeToWaitForChange)
+			{
+				
+				timeToWaitForChange = (int) changeCurveFormula(timeToWaitForChange);
+				lastImageChange = currentTimeMillis;
+				///System.out.println("Time to wait for change: " + timeToWaitForChange);
+				return true;
+			}
+
+			return false;
+		}
+		
+		public boolean circleIsClockwise(CircleGesture circle)
+		{
+		
+    		if (circle.pointable().direction().angleTo(circle.normal()) <= Math.PI/2)
+    			return true;
+    		else
+    			return false;
 		}
 		
 		@Override
@@ -82,26 +168,23 @@ public class ViewerController {
 				
 					Gesture gesture = it.next();
 					
+					if (gesture.isValid())
 			    	if (gesture.type() == Gesture.Type.TYPE_CIRCLE)
 						switch (gesture.state())
 						{
 						
 							case STATE_UPDATE:
 							{
-
-								long currentTimeMillis = System.currentTimeMillis();
-					    		
-								if ((currentTimeMillis - lastImageChange) > 800)
-								{
 								
-						    		CircleGesture circleGesture = new CircleGesture(gesture);
+								if (checkIfReadyToAdvance())
+								{
+
+									CircleGesture circleGesture = new CircleGesture(gesture);
 						    		
-						    		if (circleGesture.pointable().direction().angleTo(circleGesture.normal()) <= Math.PI/2)
+						    		if (circleIsClockwise(circleGesture))
 						    			changeCurrentIndex(true);
 						    		else
-						    			changeCurrentIndex(false);
-						    		
-						    		lastImageChange = currentTimeMillis;
+						    			changeCurrentIndex(false);						    		
 								}
 
 								break;
@@ -365,28 +448,33 @@ public class ViewerController {
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) 
 			{
-				  				
-				if (e.getID() == KeyEvent.KEY_RELEASED)
-					switch (e.getKeyCode())
-					{
-					
-						case KeyEvent.VK_LEFT:
+				  	
+				if (! applicationView.getZoomTextField().hasFocus())
+				{
+					if (e.getID() == KeyEvent.KEY_RELEASED)
+						switch (e.getKeyCode())
 						{
-							
-							changeCurrentIndex(false);
-							return false;
-						}
+						
+							case KeyEvent.VK_LEFT:
+							{
 								
-						case KeyEvent.VK_RIGHT:
-						{
-										
-							changeCurrentIndex(true);
-							return false;
-						}
-								
-						default:
-							return false;
-					}	
+								changeCurrentIndex(false);
+								return false;
+							}
+									
+							case KeyEvent.VK_RIGHT:
+							{
+											
+								changeCurrentIndex(true);
+								return false;
+							}
+									
+							default:
+								return false;
+						}	
+					else
+						return false;
+				}
 				else
 					return false;
 			}
@@ -430,9 +518,8 @@ public class ViewerController {
 					
 					currentImageIndex = 1;
 					changeCurrentIndex(false);
-					//JFrame fullScreenView = new JFrame();
-					//fullScreenView.getContentPane().add(imageView);
-					//GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(fullScreenView);
+					
+					applicationView.requestFocus();
 				}
 			}			
 		});
@@ -589,8 +676,39 @@ public class ViewerController {
 			public void actionPerformed(ActionEvent arg0) {changeCurrentIndex(true);}
 		});
 		
+		/*Implementing listener for the zoom text field on the bottom tool bar*/
+		applicationView.getZoomTextField().addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent event) 
+			{
+			
+				try 
+				{
+
+					Document document = applicationView.getZoomTextField().getDocument();
+					String text = document.getText(0, document.getLength());
+					Matcher matcher = Pattern.compile("(?<value>\\d+)%*").matcher(text);
+					
+					if (matcher.matches())
+					{
+						
+						int value = Integer.valueOf(matcher.group("value"));
+						
+						if ((0 <= value) && (value <= 800))
+						{
+							
+							applicationView.getZoomSlider().setValue(value);
+							applicationView.requestFocus();
+						}
+					}
+				} 
+				catch (BadLocationException e) {e.printStackTrace();}
+			}
+		});
 		
-		/*Implementing listeners for zoom slider on the bottom tool bar.*/
+		/*Implementing listener for zoom slider on the bottom tool bar.*/
 		applicationView.getZoomSlider().addChangeListener(new ChangeListener()
 		{
 
@@ -598,7 +716,7 @@ public class ViewerController {
 			public void stateChanged(ChangeEvent arg0) {
 				
 				JSlider source = (JSlider) arg0.getSource();
-				
+
 				applicationView.getZoomTextField().setText(source.getValue() + "%");
 				imageView.setZoomRatio((double) source.getValue() / 100);
 				recalculateImagePositioning();

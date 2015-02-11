@@ -3,7 +3,7 @@ package views;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 
@@ -63,6 +63,8 @@ public class ViewerView extends javax.swing.JFrame
 	
 	/*Help Menu identifiers.*/
 	private JMenu helpMenu;
+	private JMenuItem helpMenuLeapConnection;
+	
 	private ImageView imageView;
 	
 	/*Bottom Tool Bar identifier.*/
@@ -98,7 +100,8 @@ public class ViewerView extends javax.swing.JFrame
 				
 		/*Main application window.*/
 		setTitle("Cafallery");//setTitle("Picture Viewer");
-		setSize(800, 600);
+		setSize(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
+				Toolkit.getDefaultToolkit().getScreenSize().height / 2);
 		setMinimumSize(new Dimension(350, 200));
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
@@ -148,6 +151,17 @@ public class ViewerView extends javax.swing.JFrame
 		helpMenu = new JMenu("Help");
 		helpMenu.getAccessibleContext().setAccessibleDescription("Help menu.");
 		helpMenu.setMnemonic(KeyEvent.VK_H);
+	
+		helpMenuLeapConnection = new JMenuItem("Leap Motion disconnected");
+		
+		try {
+			
+			helpMenuLeapConnection.setIcon(new ImageIcon(
+					ImageIO.read(new File("src/images/disconnected.png"))));
+		} 
+		catch (IOException e) {e.printStackTrace();}
+		
+		helpMenu.add(helpMenuLeapConnection);
 		mainMenuBar.add(helpMenu);
 		
 		setJMenuBar(mainMenuBar);
@@ -171,8 +185,10 @@ public class ViewerView extends javax.swing.JFrame
 		nextButton = new JButton();
 		try {
 			
-			previousButton.setIcon(new ImageIcon(ImageIO.read(new File("src/images/arrow_left.png"))));
-			nextButton.setIcon(new ImageIcon(ImageIO.read(new File("src/images/arrow_right.png"))));
+			previousButton.setIcon(new ImageIcon(ImageIO.read(
+					new File("src/images/arrow_left.png"))));
+			nextButton.setIcon(new ImageIcon(ImageIO.read(
+					new File("src/images/arrow_right.png"))));
 		} 
 		catch (IOException e) 
 		{
@@ -191,18 +207,24 @@ public class ViewerView extends javax.swing.JFrame
 		zoomTextField = new JTextField(4);
 		zoomTextField.setText("100%");
 		zoomTextField.setEditable(true);
-		zoomTextField.setMinimumSize(new Dimension(zoomTextField.getPreferredSize().width, zoomTextField.getPreferredSize().height));
-		zoomTextField.setMaximumSize(new Dimension(zoomTextField.getPreferredSize().width, zoomTextField.getPreferredSize().height));
+		zoomTextField.setMinimumSize(new Dimension(zoomTextField
+				.getPreferredSize().width, zoomTextField.getPreferredSize().height));
+		zoomTextField.setMaximumSize(new Dimension(zoomTextField
+				.getPreferredSize().width, zoomTextField.getPreferredSize().height));
 
 		zoomMinusLabel = new JLabel("-");
 		
 		zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, ZOOM_INIT);
-		zoomSlider.setMaximumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
-		zoomSlider.setMinimumSize(new Dimension(150, zoomSlider.getPreferredSize().height));
+		
+		zoomSlider.setMaximumSize(new Dimension(150, zoomSlider
+				.getPreferredSize().height));
+		zoomSlider.setMinimumSize(new Dimension(150, zoomSlider
+				.getPreferredSize().height));
+		
 		zoomSlider.setMajorTickSpacing(100);
 		zoomSlider.setMinorTickSpacing(10);
-		zoomSlider.setSnapToTicks(true);
 		zoomSlider.setPaintTicks(true);
+		zoomSlider.setFocusable(false);
 		
 		zoomPlusLabel = new JLabel("+");
 		
@@ -261,6 +283,14 @@ public class ViewerView extends javax.swing.JFrame
 	public JCheckBoxMenuItem getViewMenuAutoResizeCheckBox() {return viewMenuAutoResizeCheckBox;}
 
 	public JMenuItem getViewMenuInvertBackground() {return viewMenuInvertBackground;}
+
+	public JMenuItem getHelpMenuLeapConnection() {
+		return helpMenuLeapConnection;
+	}
+
+	public void setHelpMenuLeapConnection(JMenuItem helpMenuLeapConnection) {
+		this.helpMenuLeapConnection = helpMenuLeapConnection;
+	}
 
 	public JLabel getFilePathLabel() {return filePathLabel;}
 
