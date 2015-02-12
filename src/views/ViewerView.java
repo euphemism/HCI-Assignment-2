@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -20,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSlider;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
@@ -29,6 +32,8 @@ import com.sun.glass.events.KeyEvent;
 /**
  * @author Nicholas
  *
+ * Class for the view that houses the JFrame that is the application and its
+ * UI elements. 
  */
 public class ViewerView extends javax.swing.JFrame
 {
@@ -64,6 +69,7 @@ public class ViewerView extends javax.swing.JFrame
 	/*Help Menu identifiers.*/
 	private JMenu helpMenu;
 	private JMenuItem helpMenuLeapConnection;
+	private JMenuItem helpMenuHowToEnableSlideshow;
 	
 	private ImageView imageView;
 	
@@ -82,7 +88,7 @@ public class ViewerView extends javax.swing.JFrame
 	private static final int ZOOM_MAX = 800;
 	
 	/**
-	 * 
+	 * Constructor for the ViewerView class.
 	 */
 	public ViewerView()
 	{
@@ -103,8 +109,7 @@ public class ViewerView extends javax.swing.JFrame
 		setSize(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
 				Toolkit.getDefaultToolkit().getScreenSize().height / 2);
 		setMinimumSize(new Dimension(350, 200));
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);		
 		setLayout(new GridBagLayout());
 		
 		/*Menu bar for application.*/
@@ -117,6 +122,8 @@ public class ViewerView extends javax.swing.JFrame
 		
 		fileMenuOpen = new JMenuItem("Open", KeyEvent.VK_O); //Mnemonic: 'O'pen
 		fileMenuExit = new JMenuItem("Exit", KeyEvent.VK_E); //Mnemonic: 'E'xit
+		fileMenuOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+		fileMenuExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 		
 		fileMenu.addSeparator();
 		fileMenu.add(fileMenuOpen);
@@ -131,13 +138,17 @@ public class ViewerView extends javax.swing.JFrame
 		
 		viewMenuPreviousImage = new JMenuItem("Previous image", KeyEvent.VK_P); //Mnemonic: 'P'revious
 		viewMenuNextImage = new JMenuItem("Next image", KeyEvent.VK_N); //Mnemonic: 'N'ext
-
+		viewMenuPreviousImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
+		viewMenuNextImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+		
 		viewMenuAutoResizeCheckBox = new JCheckBoxMenuItem("Auto-resize image");
 		viewMenuAutoResizeCheckBox.setMnemonic(KeyEvent.VK_A); //Mnemonic: 'A'uto-resize
+		viewMenuAutoResizeCheckBox.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
 		viewMenuAutoResizeCheckBox.setSelected(true);
 		
 		viewMenuInvertBackground = new JMenuItem("Invert viewer background", KeyEvent.VK_I); //Mnemonic: 'I'nvert
-		
+		viewMenuInvertBackground.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK));
+
 		viewMenu.add(viewMenuPreviousImage);
 		viewMenu.add(viewMenuNextImage);
 		viewMenu.addSeparator();
@@ -161,16 +172,18 @@ public class ViewerView extends javax.swing.JFrame
 		} 
 		catch (IOException e) {e.printStackTrace();}
 		
+		helpMenuHowToEnableSlideshow = new JMenuItem("How to enable slideshow", KeyEvent.VK_H); //Mnemonic: 'H'elp
+		helpMenuHowToEnableSlideshow.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
+		
 		helpMenu.add(helpMenuLeapConnection);
+		helpMenu.add(helpMenuHowToEnableSlideshow);
 		mainMenuBar.add(helpMenu);
 		
 		setJMenuBar(mainMenuBar);
 		
-		imageView = new ImageView();
-		
 		/*Bottom tool bar for application.*/
 		bottomMenuBar = new JMenuBar();
-		filePathLabel = new JLabel();
+		filePathLabel = new JLabel("No image or directory opened");
 		bottomMenuBar.add(filePathLabel);
 
 		bottomMenuBar.add(Box.createHorizontalStrut(100));
@@ -197,7 +210,8 @@ public class ViewerView extends javax.swing.JFrame
 			previousButton.setText("<");
 			nextButton.setText(">");
 		}
-		
+		previousButton.setFocusable(false);
+		nextButton.setFocusable(false);
 		bottomMenuBar.add(previousButton);
 		bottomMenuBar.add(nextButton);
 		bottomMenuBar.add(Box.createHorizontalStrut(10));
@@ -236,15 +250,8 @@ public class ViewerView extends javax.swing.JFrame
 		bottomMenuBar.add(zoomPlusLabel);
 		
 		/*Layout constraints for the main image view panel.*/
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		constraints.gridheight = 1;
-		constraints.weighty = 1.0;
-		constraints.fill = GridBagConstraints.BOTH;
-		constraints.anchor = GridBagConstraints.FIRST_LINE_START;	
-		add(imageView, constraints);
+		imageView = new ImageView();
+		setImageView(imageView);
 
 		/*Layout constraints for the bottom menu bar.*/
 		constraints = new GridBagConstraints();
@@ -255,7 +262,7 @@ public class ViewerView extends javax.swing.JFrame
 		constraints.weightx = 1.0;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.anchor = GridBagConstraints.FIRST_LINE_START;
-		add(bottomMenuBar, constraints);
+		add(bottomMenuBar, constraints);		
 	}
 	
 	public GridBagConstraints getConstraints() {return constraints;}
@@ -284,13 +291,9 @@ public class ViewerView extends javax.swing.JFrame
 
 	public JMenuItem getViewMenuInvertBackground() {return viewMenuInvertBackground;}
 
-	public JMenuItem getHelpMenuLeapConnection() {
-		return helpMenuLeapConnection;
-	}
+	public JMenuItem getHelpMenuLeapConnection() {return helpMenuLeapConnection;}
 
-	public void setHelpMenuLeapConnection(JMenuItem helpMenuLeapConnection) {
-		this.helpMenuLeapConnection = helpMenuLeapConnection;
-	}
+	public JMenuItem getHelpMenuHowToEnableSlideshow() {return helpMenuHowToEnableSlideshow;}
 
 	public JLabel getFilePathLabel() {return filePathLabel;}
 
@@ -305,6 +308,20 @@ public class ViewerView extends javax.swing.JFrame
 	public JSlider getZoomSlider() {return zoomSlider;}
 
 	public ImageView getImageView() {return imageView;}
+	
+	public void setImageView(ImageView view)
+	{
+	
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth = GridBagConstraints.REMAINDER;
+		constraints.gridheight = 1;
+		constraints.weighty = 1.0;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.anchor = GridBagConstraints.FIRST_LINE_START;	
+		add(view, constraints);
+	}
 	
 	public JFrame getApplicationFrame(){return applicationFrame;}
 }

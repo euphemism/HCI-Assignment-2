@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 /**
  * @author Nicholas
  *
+ * Class for the JPanel that houses the displayed image.
  */
 public class ImageView extends JPanel
 {
@@ -36,7 +37,7 @@ public class ImageView extends JPanel
 	private double zoomRatio;	
 	
 	/**
-	 * 
+	 * Constructor for the ImageView class.
 	 */
 	public ImageView()
 	{
@@ -59,120 +60,56 @@ public class ImageView extends JPanel
 		g.drawImage(currentImage, xStart, yStart, xEnd, yEnd, 0, 0,
 				currentImageWidth, currentImageHeight, null);
 	}
-	
-	
-	/**
-	 * @return
-	 */
+
 	public int getCurrentImageWidth() {return currentImageWidth;}
 
-	/**
-	 * @param currentImageWidth
-	 */
 	public void setCurrentImageWidth(int currentImageWidth) {this.currentImageWidth = currentImageWidth;}
 
-	/**
-	 * @return
-	 */
 	public int getCurrentImageHeight() {return currentImageHeight;}
 
-	/**
-	 * @param currentImageHeight
-	 */
 	public void setCurrentImageHeight(int currentImageHeight) {this.currentImageHeight = currentImageHeight;}
 
-	/**
-	 * @return
-	 */
 	public int getXOffset() {return xOffset;}
 
-	/**
-	 * @param xOffset
-	 */
 	public void setXOffset(int xOffset) {this.xOffset = xOffset;}
 
-	/**
-	 * @return
-	 */
 	public int getYOffset() {return yOffset;}
 
-	/**
-	 * @param yOffset
-	 */
 	public void setYOffset(int yOffset) {this.yOffset = yOffset;}
 
-	/**
-	 * @return
-	 */
 	public boolean getIsDraggable() {return isDraggable;};
-	
-	/**
-	 * @return
-	 */
+
 	public int getLastMouseX() {return lastMouseX;}
 
-	/**
-	 * @param lastMouseX
-	 */
 	public void setLastMouseX(int lastMouseX) {this.lastMouseX = lastMouseX;}
 
-	/**
-	 * @return
-	 */
 	public int getLastMouseY() {return lastMouseY;}
 
-	/**
-	 * @param lastMouseY
-	 */
 	public void setLastMouseY(int lastMouseY) {this.lastMouseY = lastMouseY;}
 
-	/**
-	 * @return
-	 */
 	public int getLastXOffset() {return lastXOffset;}
 
-	/**
-	 * @param lastXOffset
-	 */
 	public void setLastXOffset(int lastXOffset) {this.lastXOffset = lastXOffset;}
 
-	/**
-	 * @return
-	 */
 	public int getLastYOffset() {return lastYOffset;}
 
-	/**
-	 * @param lastYOffset
-	 */
 	public void setLastYOffset(int lastYOffset) {this.lastYOffset = lastYOffset;}
 
-	/**
-	 * 
-	 */
 	public void resetOffset()
 	{
 	
 		lastXOffset = lastYOffset = xOffset = yOffset = 0;
 	}
-	
-	/**
-	 * @return
-	 */
+
 	public boolean getAutoResize() {return autoResize;}
-	
-	/**
-	 * @param turnOnAutoResize
-	 */
+
 	public void setAutoResize(boolean turnOnAutoResize)
 	{
 	
 		autoResize = turnOnAutoResize;
 		isDraggable = ! turnOnAutoResize;
 	}
-	
-	/**
-	 * @param image
-	 */
+
 	public void setCurrentImage(BufferedImage image)
 	{
 
@@ -181,54 +118,24 @@ public class ImageView extends JPanel
 		currentImageWidth = image.getWidth();
 		currentImageHeight = image.getHeight();
 	}
-	
-	/**
-	 * @return
-	 */
+
 	public int getXStart() {return xStart;}
 
-	/**
-	 * @param xStart
-	 */
 	public void setXStart(int xStart) {this.xStart = xStart;}
 
-	/**
-	 * @return
-	 */
 	public int getYStart() {return yStart;}
 
-	/**
-	 * @param yStart
-	 */
 	public void setYStart(int yStart) {this.yStart = yStart;}
 
-	/**
-	 * @return
-	 */
 	public int getXEnd() {return xEnd;}
 
-	/**
-	 * @param xEnd
-	 */
 	public void setXEnd(int xEnd) {this.xEnd = xEnd;}
 
-	/**
-	 * @return
-	 */
 	public int getYEnd() {return yEnd;}
 
-	/**
-	 * @param yEnd
-	 */
 	public void setYEnd(int yEnd) {this.yEnd = yEnd;}
 
-	/**
-	 * @return
-	 */
 	public double getZoomRatio() {return zoomRatio;}
-	
-	/**
-	 * @param zoomRatio
-	 */
+
 	public void setZoomRatio(double zoomRatio) {this.zoomRatio = zoomRatio;}
 }
