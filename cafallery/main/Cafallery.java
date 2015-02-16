@@ -1,3 +1,4 @@
+package main;
 import views.ViewerView;
 import controller.ViewerController;
 import com.leapmotion.leap.*;

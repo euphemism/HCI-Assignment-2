@@ -102,7 +102,7 @@ public class ViewerController
 			{
 				
 				applicationView.getHelpMenuLeapConnection().setIcon(
-						new ImageIcon(ImageIO.read(new File("src/images/connected.png"))));
+						new ImageIcon(ImageIO.read(new File("cafallery/resources/connected.png"))));
 			} 
 			catch (IOException e) {e.printStackTrace();}
 			
@@ -122,7 +122,7 @@ public class ViewerController
 			{
 				
 				applicationView.getHelpMenuLeapConnection().setIcon(
-						new ImageIcon(ImageIO.read(new File("src/images/disconnected.png"))));
+						new ImageIcon(ImageIO.read(new File("cafallery/resources/disconnected.png"))));
 			} 
 			catch (IOException e) {e.printStackTrace();}			
 			
@@ -391,14 +391,8 @@ public class ViewerController
 		try
 		{
 			
-			return ImageIO.read(fileName);
-			
-		}
-		catch(IOException e)
-		{
-			
-			return null;
-		}
+			return ImageIO.read(fileName);}
+		catch(IOException e) {return null;}
 	}
 	
 	/**

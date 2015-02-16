@@ -168,7 +168,7 @@ public class ViewerView extends javax.swing.JFrame
 		try {
 			
 			helpMenuLeapConnection.setIcon(new ImageIcon(
-					ImageIO.read(new File("src/images/disconnected.png"))));
+					ImageIO.read(new File("cafallery/resources/disconnected.png"))));
 		} 
 		catch (IOException e) {e.printStackTrace();}
 		
@@ -199,9 +199,9 @@ public class ViewerView extends javax.swing.JFrame
 		try {
 			
 			previousButton.setIcon(new ImageIcon(ImageIO.read(
-					new File("src/images/arrow_left.png"))));
+					new File("cafallery/resources/arrow_left.png"))));
 			nextButton.setIcon(new ImageIcon(ImageIO.read(
-					new File("src/images/arrow_right.png"))));
+					new File("cafallery/resources/arrow_right.png"))));
 		} 
 		catch (IOException e) 
 		{
